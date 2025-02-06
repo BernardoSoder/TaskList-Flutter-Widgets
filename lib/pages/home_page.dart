@@ -15,7 +15,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List toDoList = <String>[];
   TextEditingController controller = TextEditingController();
   String warning = "";
-
+  bool isANewTask = true;
+  int taskIndex = 0;
+  Icon buttonIcon = Icon(Icons.add);
 
   @override
   Widget build(BuildContext context) {
@@ -27,26 +29,65 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: [
-            ListWidget(toDoList: toDoList),
+            ListWidget(
+              toDoList: toDoList,
+              deleteTask: deleteTask,
+              editTask: editTask,
+            ),
             InputWidget(controller: controller),
-          ],) , 
-      ), 
-      floatingActionButton: AddButtonWidget(adicionarUsuario: adicionarUsuario),
+          ],
+        ),
+      ),
+      floatingActionButton: AddButtonWidget(
+        addUser: addTask,
+        icon: buttonIcon,
+      ),
     );
-    
   }
 
-  void adicionarUsuario(){
-    String novaTarefa = controller.text;
-    for (var tarefa in toDoList) {
-      if (tarefa == novaTarefa){  
-        warning = "Esta tarefa já está cadastrada!";
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(warning),));
-        setState(() {});
-        return;
-      }
+  void addTask() {
+    String newTask = controller.text;
+
+    if (newTask == "") {
+      warning = "Campo não preenchido!";
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(warning),
+      ));
+      setState(() {});
+      return;
     }
-    toDoList.add(novaTarefa);
+
+    if (isANewTask == true) {
+      for (var task in toDoList) {
+        if (task == newTask) {
+          warning = "Esta tarefa já está cadastrada!";
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(warning),
+          ));
+          setState(() {});
+          return;
+        }
+      }
+      toDoList.add(newTask);
+    } else {
+      toDoList[taskIndex] = newTask;
+      isANewTask = true;
+      buttonIcon = Icon(Icons.add);
+    }
+    controller = TextEditingController();
+    setState(() {});
+  }
+
+  void deleteTask(task) {
+    toDoList.removeAt(task);
+    setState(() {});
+  }
+
+  void editTask(task) {
+    taskIndex = task;
+    isANewTask = false;
+    controller = TextEditingController(text: toDoList[task]);
+    buttonIcon = Icon(Icons.check);
     setState(() {});
   }
 }

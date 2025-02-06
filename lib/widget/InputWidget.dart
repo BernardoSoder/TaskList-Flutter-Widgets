@@ -7,8 +7,8 @@ class InputWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller, 
-      decoration: InputDecoration(label: Text("Nome"))
+      controller: controller,
+      decoration: InputDecoration(label: Text("Nome")),
       );
   }
 }
